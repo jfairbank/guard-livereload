@@ -33,7 +33,9 @@ module Guard
       private
 
       def _alter_live_css_path(data)
-        return data unless options[:apply_sass_live]
+        unless options[:apply_sass_live] && /\.s[ac]ss$/ =~ data[:path]
+          return data
+        end
 
         path = data[:path]
         new_filename = case path
