@@ -39,7 +39,7 @@ module Guard
         new_filename = case path
                        when /\.css\.(s[ac]ss)$/ then File.basename(path, ".css.#{$1}")
                        when /\.(s[ac]ss)$/ then File.basename(path, ".#{$1}")
-                       else path
+                       else File.basename(path)
                        end
 
         data[:path] = "#{File.dirname(path)}/#{new_filename}.css"
