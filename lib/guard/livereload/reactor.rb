@@ -26,11 +26,25 @@ module Guard
         paths.each do |path|
           data = _data(path)
           Compat::UI.debug(data)
-          web_sockets.each { |ws| ws.send(MultiJson.encode(data)) }
+          web_sockets.each { |ws| ws.send(MultiJson.encode(_alter_live_css_path(data))) }
         end
       end
 
       private
+
+      def _alter_live_css_path(data)
+        return data unless options[:apply_sass_live]
+
+        path = data[:path]
+        new_filename = case path
+                       when /\.css\.(s[ac]ss)$/ then File.basename(path, ".css.#{$1}")
+                       when /\.(s[ac]ss)$/ then File.basename(path, ".#{$1}")
+                       else path
+                       end
+
+        data[:path] = "#{File.dirname(path)}/#{new_filename}.css"
+        data
+      end
 
       def _data(path)
         data = {
